@@ -12,11 +12,16 @@ History of everything done on Blessing Osamudiamen's portfolio. **Newest entry f
 
 ### Open items / ideas
 
-- [ ] Google Search Console: click Verify, submit `sitemap.xml`, request indexing for Home + the 5 case-study pages.
-- [ ] Bing Webmaster Tools: import the site from Search Console (no code needed).
+- [ ] Google Search Console: request indexing for Home + the 5 case-study pages. On 2026-10-17 the daily "Request indexing" quota ran out; retry from 2026-10-18 (featured case studies first).
+- [ ] Check indexing in Search Console (Sitemaps → 14 discovered; Indexing → Pages) and Bing after about a week.
 - [ ] Add the site URL to her LinkedIn profile (Contact info → Website) so search engines connect the two.
 
 ## Log
+
+### 2026-10-17 — Search Console verified, sitemap submitted, Bing added
+- Google Search Console: property verified, `sitemap.xml` submitted successfully, URL Inspection live test says the page can be indexed. "Request indexing" hit the daily quota (normal for a new property); retry tomorrow.
+- Bing Webmaster Tools: site added by the owner (also feeds DuckDuckGo, Yahoo and ChatGPT search).
+- Files: `progress.md` only (no code change).
 
 ### 2026-10-17 — Deployed; Google Search Console verification tag
 - Site is live on Vercel at https://blessing-osamudiamen.vercel.app (repo imported by the owner; pushes to `main` auto-deploy). Live sitemap (14 URLs), robots and link previews (Twitterbot, TelegramBot, WhatsApp, facebookexternalhit) checked.
