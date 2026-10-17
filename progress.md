@@ -12,11 +12,18 @@ History of everything done on Blessing Osamudiamen's portfolio. **Newest entry f
 
 ### Open items / ideas
 
-- [ ] Push to GitHub and connect the repo to Vercel (first deploy).
-- [ ] After the first deploy: verify the site in Google Search Console and Bing Webmaster Tools (paste the codes into `seo.googleSiteVerification` / `seo.bingSiteVerification`), then submit `https://blessing-osamudiamen.vercel.app/sitemap.xml`.
+- [ ] Google Search Console: click Verify, submit `sitemap.xml`, request indexing for Home + the 5 case-study pages.
+- [ ] Bing Webmaster Tools: import the site from Search Console (no code needed).
 - [ ] Add the site URL to her LinkedIn profile (Contact info → Website) so search engines connect the two.
 
 ## Log
+
+### 2026-10-17 — Deployed; Google Search Console verification tag
+- Site is live on Vercel at https://blessing-osamudiamen.vercel.app (repo imported by the owner; pushes to `main` auto-deploy). Live sitemap (14 URLs), robots and link previews (Twitterbot, TelegramBot, WhatsApp, facebookexternalhit) checked.
+- `git remote origin` → `ssh://git@ssh.github.com:443/ARMSTRONG-AISOSA/blessing-osamudiamen.git` (port 22 is blocked on the owner's network; HTTPS has no stored credentials).
+- `seo.googleSiteVerification` set, so `<meta name="google-site-verification">` is on every page (URL-prefix property `https://blessing-osamudiamen.vercel.app/`).
+- Files: `data/profile.ts`, `architecture.md`.
+- Verified: `npm run build`; tag present in the built and live HTML.
 
 ### 2026-10-17 — Social link previews checked; X card → `summary`
 - Checked share tags on every page: og:title/description/url/type/site_name, og:image (absolute URL, 449×560, 263 KB, under WhatsApp's ~300 KB limit) and twitter:* are all present, so X, Telegram, WhatsApp, LinkedIn and Facebook build a preview.

@@ -91,7 +91,9 @@ All SEO copy lives in `seo` in `data/profile.ts`: `updated` (content date), name
 
 ## Deployment
 
-- Vercel, framework preset **Next.js**, default build (`next build`) and output. No environment variables are needed.
+- Vercel, framework preset **Next.js**, default build (`next build`) and output. No environment variables are needed. Every push to `main` deploys.
+- Git remote: `ssh://git@ssh.github.com:443/ARMSTRONG-AISOSA/blessing-osamudiamen.git` (SSH over port 443; port 22 is blocked on the owner's network).
+- Google Search Console: URL-prefix property, verified with the HTML tag from `seo.googleSiteVerification`. **Don't remove that value** or verification is lost.
 - Production domain: `blessing-osamudiamen.vercel.app`. If a custom domain is added, update `site.url` and the README.
 
 ## Decision log

@@ -38,7 +38,7 @@ export const seo = {
   honorificSuffix: "ACA",
   // Name forms people may search for (her CV header reads "OSAMUDIAMEN OSARIEMEN BLESSING")
   alternateNames: ["Blessing Osamudiamen, ACA", "Osamudiamen Osariemen Blessing", "Blessing Osariemen Osamudiamen", "Blessing Osariemen"],
-  googleSiteVerification: "", // paste the Google Search Console HTML-tag `content` value here
+  googleSiteVerification: "_DShs8MV1p1mTXTGp7x83D2aRHlpiuEKWKBG1Ux_kJ8", // Google Search Console HTML-tag `content` value (URL-prefix property)
   bingSiteVerification: "", // paste the Bing Webmaster Tools `msvalidate.01` value here
   orgUrls: {
     "Institute of Chartered Accountants of Nigeria": "https://icanig.org",
