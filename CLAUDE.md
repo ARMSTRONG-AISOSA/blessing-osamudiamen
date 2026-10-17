@@ -26,6 +26,7 @@ Then skim `app/`, `components/` and `lib/seo.ts` to confirm the docs still match
 5. **Keep versions as recorded in `architecture.md`.** Don't upgrade major versions (Next, React, Tailwind) without asking.
 6. **Log every change.** After any change, add a dated entry at the top of the log in `progress.md` saying what changed, why, and which files. Update `architecture.md` or `design.md` too if a decision or standard changed.
 7. **Verify before saying "done":** run `npm run build`. It must pass type-check and generate all pages. For visual changes, check desktop (1440px) and phone (390px) widths.
+8. **Never credit Claude.** No `Co-Authored-By: Claude…`, `Claude-Session:` or "Generated with Claude Code" lines in commits or PRs, and no Claude/AI credit on the site, in the PDFs or in the README. The only site credit is the footer's "Designed and maintained by Bossstrong-Dev".
 
 ## Commands
 
@@ -46,13 +47,16 @@ There is no lint script: Next 16 removed `next lint`.
 | Contact details / links / live URL | `site` object in `data/profile.ts` |
 | CV download | replace `public/Blessing-Osamudiamen-Resume.pdf` (same filename) |
 | Case-study PDF downloads | `public/case-studies/<slug>.pdf` + `pdf` field of the project |
-| SEO metadata / JSON-LD | `lib/seo.ts`, `app/layout.tsx` |
+| SEO keywords, page titles/descriptions, verification codes | `seo` object in `data/profile.ts` (bump `seo.updated` after any content change: it is the sitemap `lastmod`) |
+| SEO metadata / JSON-LD logic, sitemap | `lib/seo.ts`, `app/layout.tsx`, `app/sitemap.ts` |
+| Case-study pages | `app/projects/[slug]/page.tsx` (one per project, from `projects`) |
 | Shared styles (buttons, cards, eyebrow) | `app/globals.css` (`@layer components`) |
 | Page sections | `components/home|about|projects/*` |
 
 ## Gotchas
 
 - `next/font/google` downloads IBM Plex Sans/Mono at build time. A sandbox without internet fails the build with "Failed to fetch font". Locally and on Vercel this works.
-- `useSearchParams` in `ProjectsExplorer` must stay inside the `<Suspense>` in `app/projects/page.tsx`, or the static build fails.
+- Don't use `useSearchParams` in `ProjectsExplorer`: it makes the projects grid client-only, so it disappears from the static HTML crawlers read. `?open=` is read from `window.location` after mount.
+- Replacing a PDF wipes its search metadata (Title/Author/Subject/Keywords). Set it again (see `architecture.md` → SEO).
 - `site.url` must be a valid absolute URL. It feeds `metadataBase`, the sitemap and JSON-LD.
 - A Claude Design canvas mockup of the same three pages also exists on claude.ai. It is a visual reference only; this repo is the source of truth.

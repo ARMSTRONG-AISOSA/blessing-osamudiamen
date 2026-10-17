@@ -14,6 +14,8 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  // "Projects" stays active on /projects/<slug>
+  const isActive = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
   const [open, setOpen] = useState(false);
 
   return (
@@ -26,7 +28,7 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-1 md:flex">
           {links.map((l) => {
-            const active = pathname === l.href;
+            const active = isActive(l.href);
             return (
               <Link
                 key={l.href}
@@ -52,7 +54,7 @@ export default function Navbar() {
         <div className="border-t border-slate-200 bg-white md:hidden">
           <div className="container-page flex flex-col py-2">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className={`py-3 text-base ${pathname === l.href ? "font-semibold text-slate-900" : "text-slate-600"}`}>
+              <Link key={l.href} href={l.href} onClick={() => setOpen(false)} aria-current={isActive(l.href) ? "page" : undefined} className={`py-3 text-base ${isActive(l.href) ? "font-semibold text-slate-900" : "text-slate-600 hover:text-slate-900 active:text-slate-900"}`}>
                 {l.label}
               </Link>
             ))}

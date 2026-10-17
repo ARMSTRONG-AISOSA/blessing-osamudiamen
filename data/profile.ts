@@ -25,13 +25,67 @@ export const site = {
   workMode: "Remote",
   resumeUrl: "/Blessing-Osamudiamen-Resume.pdf",
   portrait: "/images/portrait.png",
+  credit: { label: "Bossstrong-Dev", url: "https://bossstrong-dev.vercel.app/" }, // footer: "Designed and maintained by …"
   description:
     "Chartered Accountant (ACA) and FMVA-certified financial analyst — financial reporting, 3-statement modeling, DCF valuation, budgeting, cash-flow analysis and Tableau dashboards. Available remotely.",
 };
 
+/* ---------- SEO ---------- */
+export const seo = {
+  updated: "2026-10-17", // bump when content changes: feeds sitemap <lastmod>
+  givenName: "Blessing",
+  familyName: "Osamudiamen",
+  honorificSuffix: "ACA",
+  // Name forms people may search for (her CV header reads "OSAMUDIAMEN OSARIEMEN BLESSING")
+  alternateNames: ["Blessing Osamudiamen, ACA", "Osamudiamen Osariemen Blessing", "Blessing Osariemen Osamudiamen", "Blessing Osariemen"],
+  googleSiteVerification: "", // paste the Google Search Console HTML-tag `content` value here
+  bingSiteVerification: "", // paste the Bing Webmaster Tools `msvalidate.01` value here
+  orgUrls: {
+    "Institute of Chartered Accountants of Nigeria": "https://icanig.org",
+    "Corporate Finance Institute": "https://corporatefinanceinstitute.com",
+    "University of Benin": "https://www.uniben.edu",
+  } as Record<string, string>,
+  // Every term is backed by her CV, certifications or case-study PDFs
+  keywords: [
+    // identity
+    "Blessing Osamudiamen", "Blessing Osamudiamen ACA", "Osamudiamen Osariemen Blessing", "Blessing Osariemen", "Blessing Osamudiamen portfolio", "Blessing Osamudiamen resume",
+    // roles
+    "Chartered Accountant", "ACA Chartered Accountant", "ICAN Chartered Accountant", "Financial Analyst", "Remote Financial Analyst", "Remote Accountant", "Remote Chartered Accountant", "Financial Modeling Analyst", "FP&A Analyst", "Account Officer", "Accountant portfolio", "Financial analyst portfolio", "Hire a financial analyst", "Hire a chartered accountant",
+    // credentials
+    "ACA", "ICAN", "Institute of Chartered Accountants of Nigeria", "AAT", "FMVA", "FMVA certified", "Financial Modeling & Valuation Analyst", "CMSA", "Capital Market & Securities Analyst", "FPWM", "Financial Planning & Wealth Management", "Corporate Finance Institute", "BSc Accounting", "University of Benin",
+    // modeling & valuation
+    "Financial modeling", "3-statement financial model", "Integrated financial model", "DCF valuation", "Discounted cash flow", "WACC", "CAPM", "Terminal value", "Sensitivity analysis", "Model audit", "Equity research", "Company valuation",
+    // planning & analysis
+    "Budgeting and forecasting", "Driver-based budgeting", "Master budget", "Budget vs actual", "Variance analysis", "Cash flow analysis", "Cash flow forecasting", "Working capital analysis", "Management reporting", "Financial analysis",
+    // accounting & reporting
+    "Financial reporting", "Financial statement preparation", "General ledger", "Chart of accounts", "Trial balance", "Bank reconciliation", "Month-end close", "Inventory costing", "Accounts receivable", "Accounts payable", "Payroll", "VAT", "WHT", "PAYE", "Internal controls", "Audit",
+    // tools & analytics
+    "Microsoft Excel", "Advanced Excel", "Excel financial model", "SUMIFS", "Tableau", "Tableau dashboard", "Power BI", "QuickBooks", "Zoho", "PowerPoint", "Data analytics", "Data visualization", "Holt-Winters forecast",
+    // case studies
+    "Dangote Cement valuation", "DANGCEM DCF", "Sales and performance dashboard", "Integrated budgeting model", "Cash flow analysis case study", "Financial modeling case studies",
+  ],
+  pages: {
+    home: {
+      title: "Blessing Osamudiamen, ACA | Chartered Accountant & Financial Analyst",
+      description:
+        "Blessing Osamudiamen is a Chartered Accountant (ACA, ICAN) and FMVA-certified financial analyst: financial modeling, DCF valuation, budgeting, reporting and Tableau dashboards. Available remotely.",
+    },
+    about: {
+      title: "About Blessing Osamudiamen, ACA | Experience, Certifications & Skills",
+      description:
+        "Work history, certifications (ACA, AAT, FMVA, CMSA, FPWM), education and tools of Blessing Osamudiamen, Chartered Accountant and financial analyst. Excel, Tableau, Power BI, QuickBooks.",
+    },
+    projects: {
+      title: "Financial Modeling & Analytics Case Studies | Blessing Osamudiamen",
+      description:
+        "Five finance case studies by Blessing Osamudiamen, ACA: a Dangote Cement DCF valuation, an integrated budgeting model, a Tableau sales dashboard, a budget-vs-actual analysis and a cash-flow analysis.",
+    },
+  },
+};
+
 /* ---------- HOME: HERO ---------- */
 export const hero = {
-  eyebrow: "Chartered Accountant · Financial Analyst",
+  eyebrow: "Blessing Osamudiamen, ACA · Chartered Accountant · Financial Analyst",
   headline: "Driving business decisions through financial rigor & data.",
   subheadline:
     "I turn complex financial data into clear, decision-ready insight — from month-end statements to 3-statement models, DCF valuations and interactive dashboards.",
@@ -81,6 +135,7 @@ export const certifications: { name: string; issuer: string; date: string; statu
 
 /* ---------- ABOUT ---------- */
 export const about = {
+  eyebrow: "About Blessing Osamudiamen, ACA",
   headline: "An accountant who reconciles every line — and then asks what it means.",
   narrative:
     "I'm a Chartered Accountant (ACA) with a strong foundation in financial reporting, valuation and financial modeling, backed by hands-on project work spanning 3-statement modeling, DCF valuation, budgeting systems, cash-flow analysis and interactive dashboard design in Excel and Tableau. I've automated financial statement preparation and reconciliation processes, and I have a track record of turning complex financial data into clear, decision-ready insights. I'm looking to bring this blend of accounting rigor and analytical fluency to a forward-thinking finance or advisory team.",
@@ -195,6 +250,7 @@ export type Project = {
   recommendations: string[];
   drive: string; // Google Drive project folder
   pdf: string; // downloadable case-study PDF in /public/case-studies
+  keywords: string[]; // SEO: search terms for this case study's page (facts from its PDF only)
 };
 
 export const projects: Project[] = [
@@ -234,6 +290,7 @@ export const projects: Project[] = [
     ],
     drive: "https://drive.google.com/drive/folders/19GqpMCCn45pk9VqayWafbVsCUE5dm0Np?usp=drive_link",
     pdf: "/case-studies/dangote-cement-equity-research.pdf",
+    keywords: ["Dangote Cement valuation", "Dangote Cement equity research", "DANGCEM DCF model", "NGX stock valuation", "Equity research model", "3-statement financial model", "DCF valuation case study", "WACC and CAPM", "Implied share price", "Sell recommendation", "Financial model audit"],
   },
   {
     slug: "99-agency-budgeting-model",
@@ -268,6 +325,7 @@ export const projects: Project[] = [
     ],
     drive: "https://drive.google.com/drive/folders/1e3d9FRnhh1BZbcE5RxkMG8ZU7T-XXGvA?usp=drive_link",
     pdf: "/case-studies/99-agency-budgeting-model.pdf",
+    keywords: ["Integrated budgeting model", "Master budget in Excel", "Driver-based budget", "Agency budget model", "Bottom-up and top-down revenue forecast", "FP&A budgeting case study", "Working capital budget", "Debt schedule", "Linked three-statement budget"],
   },
   {
     slug: "sales-performance-dashboard",
@@ -305,6 +363,7 @@ export const projects: Project[] = [
     ],
     drive: "https://drive.google.com/drive/folders/1lCbwv4vSmPNwiVJV_x7gnTUjEemQEVP4?usp=drive_link",
     pdf: "/case-studies/sales-performance-dashboard.pdf",
+    keywords: ["Tableau sales dashboard", "Sales and performance dashboard", "Tableau portfolio project", "KPI dashboard", "Profit and discount analysis", "Star schema data model", "Holt-Winters sales forecast", "Sales analytics case study"],
   },
   {
     slug: "business-performance-analysis",
@@ -340,6 +399,7 @@ export const projects: Project[] = [
     ],
     drive: "https://drive.google.com/drive/folders/1OXDd2vOtz_3a3lgsIyzJ0PkfDDfNXtww?usp=drive_link",
     pdf: "/case-studies/business-performance-analysis.pdf",
+    keywords: ["Budget vs actual analysis", "Variance analysis case study", "Business performance analysis", "Management dashboard in Excel", "Driver-based forecast", "Operating margin analysis", "Marketing cost analysis", "FP&A case study"],
   },
   {
     slug: "freshmart-cash-flow-analysis",
@@ -376,5 +436,6 @@ export const projects: Project[] = [
     ],
     drive: "https://drive.google.com/drive/folders/1u9Cf6o6eGP8RIzjL4Fmltrvj5tdTcNt_?usp=drive_link",
     pdf: "/case-studies/freshmart-cash-flow-analysis.pdf",
+    keywords: ["Cash flow analysis", "Bank statement analysis", "Bank reconciliation case study", "SUMIFS cash flow analysis", "Cash flow forecast", "Supermarket cash flow", "Surplus cash management", "Excel cash flow model"],
   },
 ];

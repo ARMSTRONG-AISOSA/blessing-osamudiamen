@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, FileDown, FolderOpen } from "lucide-react";
 import type { Project } from "@/data/profile";
@@ -18,7 +19,9 @@ export default function ProjectCard({ project: p, onOpen }: { project: Project; 
         <span className="badge-orange">{p.category}</span>
         <span className="text-xs font-medium text-slate-500">{p.context}</span>
       </div>
-      <h2 className="text-[21px] font-semibold leading-snug">{p.title}</h2>
+      <h2 className="text-[21px] font-semibold leading-snug">
+        <Link href={`/projects/${p.slug}`} className="hover:text-orange-700 active:text-orange-700">{p.title}</Link>
+      </h2>
       <div>
         <h3 className="font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500">Problem</h3>
         <p className="mt-1 text-[15px] leading-relaxed text-slate-700">{p.problem}</p>

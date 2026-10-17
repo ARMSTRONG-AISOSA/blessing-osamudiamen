@@ -19,7 +19,13 @@ export default function Footer() {
         </a>
       </div>
       <div className="border-t border-slate-800">
-        <p className="container-page py-5 text-xs text-slate-400">© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
+        <div className="container-page flex flex-col gap-2 py-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
+          <p>
+            Designed and maintained by{" "}
+            <a href={site.credit.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-300 transition-colors hover:text-orange-400 active:text-orange-400">{site.credit.label}</a>
+          </p>
+        </div>
       </div>
     </footer>
   );

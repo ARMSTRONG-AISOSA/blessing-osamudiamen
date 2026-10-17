@@ -19,7 +19,7 @@ export default function FeaturedProjects() {
       <div className="grid gap-6 md:grid-cols-2">
         {featured.map((p, i) => (
           <Reveal key={p.slug} delay={i * 0.08}>
-            <Link href={`/projects?open=${p.slug}`} className="card group flex h-full flex-col overflow-hidden transition-all hover:-translate-y-1 active:-translate-y-1 hover:border-orange-300 active:border-orange-300 hover:shadow-lg active:shadow-lg">
+            <Link href={`/projects/${p.slug}`} className="card group flex h-full flex-col overflow-hidden transition-all hover:-translate-y-1 active:-translate-y-1 hover:border-orange-300 active:border-orange-300 hover:shadow-lg active:shadow-lg">
               <div className="h-2 bg-slate-900 transition-colors group-hover:bg-orange-500" />
               <div className="flex flex-1 flex-col gap-3.5 p-7">
                 <span className="badge-orange self-start">{p.category}</span>

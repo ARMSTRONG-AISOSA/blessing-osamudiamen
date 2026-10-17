@@ -33,8 +33,10 @@ export default function Hero() {
 
       {/* Copy — RIGHT */}
       <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <p className="eyebrow">{hero.eyebrow}</p>
-        <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[56px]">{hero.headline}</h1>
+        <h1 className="flex flex-col gap-6">
+          <span className="eyebrow">{hero.eyebrow}</span>
+          <span className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[56px]">{hero.headline}</span>
+        </h1>
         <p className="max-w-xl text-lg leading-relaxed text-slate-600">{hero.subheadline}</p>
         <ul className="flex flex-wrap gap-2" aria-label="Credentials">
           {hero.credentials.map((c) => (

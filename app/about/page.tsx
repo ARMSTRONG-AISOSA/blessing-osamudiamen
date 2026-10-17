@@ -5,17 +5,29 @@ import Timeline from "@/components/about/Timeline";
 import VirtualExperience from "@/components/about/VirtualExperience";
 import Education from "@/components/about/Education";
 import Toolstack from "@/components/about/Toolstack";
-import { pageMetadata } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
+import { graph, ids, pageMetadata, webPageLd } from "@/lib/seo";
+import { seo } from "@/data/profile";
 
-export const metadata: Metadata = pageMetadata({
-  title: "About",
-  description: "Blessing Osamudiamen — Chartered Accountant (ACA): work history, virtual experience, education, certifications and toolstack.",
-  path: "/about",
-});
+const page = seo.pages.about;
+
+export const metadata: Metadata = pageMetadata({ ...page, path: "/about" });
 
 export default function AboutPage() {
   return (
     <>
+      <JsonLd
+        data={graph(
+          webPageLd({
+            path: "/about",
+            type: "ProfilePage",
+            name: page.title,
+            description: page.description,
+            crumbs: [{ name: "Home", path: "/" }, { name: "About", path: "/about" }],
+            extra: { mainEntity: { "@id": ids.person } },
+          }),
+        )}
+      />
       <Narrative />
       <ContactButtons />
       <Timeline />

@@ -42,6 +42,8 @@ Rules:
 | Body | sans | 15–18px, `leading-relaxed`, slate-600/700 |
 | Stat figure | mono | `text-2xl sm:text-4xl`, semibold |
 
+**Page H1s include the eyebrow**: on Home, About and Projects the eyebrow is a `<span class="eyebrow">` *inside* the `<h1>` (SEO: the name and role are part of the H1). It looks identical to a separate eyebrow. `SectionHeading as="h1"` does this automatically. Case-study pages use the project title as the H1.
+
 Every section heading is an **eyebrow + H2** via `<SectionHeading eyebrow="…" title="…" />`. Current section titles: "Where I add value", "Analysis with a "so what"", "Certifications", "Work history", "Internships & job simulations", "Education & credentials", "Core technical tools".
 
 ## Layout & spacing
@@ -68,6 +70,8 @@ Every section heading is an **eyebrow + H2** via `<SectionHeading eyebrow="…" 
 | Recommendation box | orange-50 bg, orange-300 border, orange-800 heading |
 | Timeline | orange-500 ring dot + slate-200 line, card per role, orange "Impact" row |
 | Project modal | slate-900 header with orange category pill, 4 mono metric tiles, numbered sections 1–4, "so what" box, actions: Download PDF (primary) · Open project files (secondary) · Close |
+| Case-study page | breadcrumb (slate-500, links hover orange-700) → slate-900 header (orange category pill, context, H1, mono "Key result" label, author byline) → white card with `CaseStudyContent` + sticky sidebar (Files: Download PDF primary / Open project files secondary; author card with portrait, About + Email links) → "More case studies" link cards (2-col from `sm`) |
+| Footer credit | bottom bar right (below copyright on phones): "Designed and maintained by **Bossstrong-Dev**", slate-300 semibold link, hover/tap orange-400 |
 | Filter tabs | white pill group, active = slate-900 pill animated with Framer `layoutId="tab-pill"`, counts in mono |
 
 ## Imagery

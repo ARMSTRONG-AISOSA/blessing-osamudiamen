@@ -4,7 +4,8 @@ History of everything done on Blessing Osamudiamen's portfolio. **Newest entry f
 
 ## Current state (as of 2026-10-17)
 
-- Three pages, built and static: **Home**, **About**, **Projects** (5 case studies with modal, PDF download and Google Drive link).
+- Three pages, built and static: **Home**, **About**, **Projects** (5 case studies with modal, PDF download and Google Drive link), plus a static page per case study at `/projects/<slug>`.
+- Full SEO setup: keywords, per-page metadata, JSON-LD graph, sitemap (pages + PDFs), favicon/manifest, llms.txt.
 - Next.js 16.4.2 · React 19 · Tailwind 3.4 · Framer Motion · TypeScript. `npm run build` passes.
 - Live target: https://blessing-osamudiamen.vercel.app · Repo: https://github.com/ARMSTRONG-AISOSA/blessing-osamudiamen.git
 - All content is in `data/profile.ts`. No `[PASTE_CV_HERE]` placeholders remain.
@@ -12,12 +13,37 @@ History of everything done on Blessing Osamudiamen's portfolio. **Newest entry f
 ### Open items / ideas
 
 - [ ] Push to GitHub and connect the repo to Vercel (first deploy).
-- [ ] The downloadable CV (`public/Blessing-Osamudiamen-Resume.pdf`) still shows "Benin City, Edo State, Nigeria", the phone number and "Grade: 4.31/5.0". The owner asked only for the age to be removed from this file. Confirm whether those should go too (the site itself hides them).
-- [ ] Zoho tool description is generic ("Accounting & business operations"). Confirm which Zoho product she uses.
-- [ ] Optional: a dedicated OpenGraph image (1200×630) instead of the portrait.
-- [ ] Optional: a Tableau Public link for the Sales Dashboard. Her CV links to it: https://public.tableau.com/views/SalesandPerformanceDashboard_17843717088220/PerformanceDashboard
+- [ ] After the first deploy: verify the site in Google Search Console and Bing Webmaster Tools (paste the codes into `seo.googleSiteVerification` / `seo.bingSiteVerification`), then submit `https://blessing-osamudiamen.vercel.app/sitemap.xml`.
+- [ ] Add the site URL to her LinkedIn profile (Contact info → Website) so search engines connect the two.
 
 ## Log
+
+### 2026-10-17 — Social link previews checked; X card → `summary`
+- Checked share tags on every page: og:title/description/url/type/site_name, og:image (absolute URL, 449×560, 263 KB, under WhatsApp's ~300 KB limit) and twitter:* are all present, so X, Telegram, WhatsApp, LinkedIn and Facebook build a preview.
+- Changed `twitter:card` from `summary_large_image` to `summary`. The large card crops to 2:1, which cuts a tall portrait through the face; `summary` shows a square thumbnail.
+- Files: `app/layout.tsx`, `lib/seo.ts`, `architecture.md`.
+- Verified: `npm run build`; tags read from `next start` HTML.
+
+### 2026-10-17 — Full SEO pass: case-study pages, keywords, structured data, sitemap
+- **Case-study pages** `/projects/<slug>` (5, statically generated): breadcrumb, navy header with key result and author byline, full analysis, files + author sidebar, "More case studies" links. Before this, case studies existed only inside a modal and could not be indexed. Body is shared with the modal via `components/projects/CaseStudyContent.tsx` (it now also shows the `method` paragraph). Home featured cards link to the pages; project-card titles link to them; the modal has an "Open as a page" link. `?open=<slug>` deep links still work.
+- **Server-rendered projects grid:** `ProjectsExplorer` no longer uses `useSearchParams` (it reads `?open=` from `window.location` after mount, pushState + popstate), so the `<Suspense>` wrapper was removed and the 5 cards + filter tabs are now in the static HTML. `AnimatePresence initial={false}` keeps them visible before hydration. Previously `/projects` shipped with an empty grid until JavaScript ran.
+- **Keywords & page copy** in a new `seo` object in `data/profile.ts`: ~110 keywords (identity, roles, credentials, modeling, FP&A, accounting, tools, case studies), per-page titles/descriptions, name variants, issuer URLs, Search Console / Bing verification slots (empty). Each project got a `keywords` array (facts from its PDF only). No location/nationality terms.
+- **H1s now carry the keywords:** the eyebrow sits inside the H1 on Home ("Blessing Osamudiamen, ACA · Chartered Accountant · Financial Analyst"), About ("About Blessing Osamudiamen, ACA") and Projects ("Financial modeling & analytics case studies"). Looks the same as before.
+- **Metadata** (`lib/seo.ts`, `app/layout.tsx`): absolute titles per page, canonical, keywords, OpenGraph `profile` (first/last name) / `article` / `website`, Twitter, googleBot `max-image-preview:large`, `max-snippet:-1`, applicationName/creator/publisher/category, formatDetection off, verification tags when filled in.
+- **JSON-LD @graph:** WebSite + Person (given/family name, ACA suffix, alternate names, two Occupations with O*NET codes and skills, worksFor current employer, alumniOf, knowsAbout, every credential with issuer URL, ContactPoints, sameAs LinkedIn) in the layout; WebPage (Home), ProfilePage (About), CollectionPage + ItemList (Projects), WebPage + Article + BreadcrumbList (each case study). `JsonLd` component escapes `<`. WhatsApp moved from `sameAs` to a ContactPoint.
+- **Sitemap:** 14 URLs: 3 pages, 5 case-study pages, CV PDF, 5 case-study PDFs; image entries (portrait) on Home/About; `lastmod` = `seo.updated` (real content date, not build time). robots.txt allows everything, points to the sitemap, sets host.
+- **New routes:** `app/icon.svg` (BO monogram favicon), `app/apple-icon.tsx` (180px PNG), `app/manifest.ts`, `app/llms.txt/route.ts` (plain-text summary for AI search, generated from the data).
+- **PDF metadata:** Title/Author/Subject/Keywords set on the CV and all 5 case-study PDFs (Google shows the PDF Title in results). Page content unchanged (verified text identical).
+- Navbar: "Projects" stays active on case-study pages; mobile links got `aria-current` and hover/tap colours.
+- Rule added: never credit Claude (CLAUDE.md rule 8). Abandoned open items (Zoho product, OG image, Tableau link) removed.
+- Files: `data/profile.ts`, `lib/seo.ts`, `app/layout.tsx`, `app/page.tsx`, `app/about/page.tsx`, `app/projects/page.tsx`, `app/projects/[slug]/page.tsx` (new), `app/sitemap.ts`, `app/robots.ts`, `app/icon.svg`, `app/apple-icon.tsx`, `app/manifest.ts`, `app/llms.txt/route.ts` (new), `components/JsonLd.tsx`, `components/projects/CaseStudyContent.tsx` (new), `components/projects/ProjectModal.tsx`, `ProjectCard.tsx`, `ProjectsExplorer.tsx`, `components/home/Hero.tsx`, `FeaturedProjects.tsx`, `components/about/Narrative.tsx`, `components/SectionHeading.tsx`, `components/layout/Navbar.tsx`, the 6 PDFs, `CLAUDE.md`, `architecture.md`, `design.md`.
+- Verified: `npm run build` passes (16 static routes); every page checked for title, description, canonical, OG, H1 and parseable JSON-LD; sitemap/robots/manifest/icons/llms.txt fetched from `next start`; screenshots at 1440px and 390px (Home, Projects, case-study page, modal deep link).
+
+### 2026-10-17 — CV grade removed, CV certifications detailed, footer credit
+- CV PDF (`public/Blessing-Osamudiamen-Resume.pdf`): removed "Grade: 4.31/5.0" and moved the coursework bullet up to close the gap. Rewrote the CERTIFICATIONS lines to match the homepage (same order, newest first), each with issuer and date, e.g. "Association of Chartered Accountants (ACA) — Institute of Chartered Accountants of Nigeria, July 2026". Owner decision: city and phone number stay on the CV; only the grade goes. All 7 links in the PDF are preserved. Edited with PyMuPDF (redact + reinsert in Liberation Serif, the CV's own font).
+- Footer bottom bar: added "Designed and maintained by **Bossstrong-Dev**" → `https://bossstrong-dev.vercel.app/` (new tab), on the right of the copyright on desktop and below it on phones. Hover/tap → orange-400. Label and URL live in `site.credit`.
+- Files: `public/Blessing-Osamudiamen-Resume.pdf`, `data/profile.ts`, `components/layout/Footer.tsx`, `architecture.md`.
+- Verified: `npm run build` passes (all 7 routes static); footer checked in screenshots at 1440px and 390px; CV text/links checked with PyMuPDF and `pdftotext`, page rendered and inspected.
 
 ### 2026-10-17 — Live URL, repo, new CV, wording, project docs
 - `site.url` → `https://blessing-osamudiamen.vercel.app`. `package.json`: name `blessing-osamudiamen`, `homepage`, `repository` (GitHub).

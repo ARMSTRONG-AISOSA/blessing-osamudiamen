@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { CATEGORIES, projects } from "@/data/profile";
 import ProjectCard from "./ProjectCard";
@@ -9,19 +8,33 @@ import ProjectModal from "./ProjectModal";
 
 type Filter = (typeof CATEGORIES)[number];
 
+const readOpen = () => new URLSearchParams(window.location.search).get("open");
+
 export default function ProjectsExplorer() {
-  const router = useRouter();
-  const params = useSearchParams();
   const [filter, setFilter] = useState<Filter>("All");
-  const openSlug = params.get("open");
+  // ?open=<slug> is read after mount (not with useSearchParams) so the card grid is server-rendered for crawlers
+  const [openSlug, setOpenSlug] = useState<string | null>(null);
   const selected = projects.find((p) => p.slug === openSlug) ?? null;
+
+  useEffect(() => {
+    const sync = () => setOpenSlug(readOpen());
+    sync();
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
 
   const shown = useMemo(() => (filter === "All" ? projects : projects.filter((p) => p.category === filter)), [filter]);
   const count = (c: Filter) => (c === "All" ? projects.length : projects.filter((p) => p.category === c).length);
 
-  // Deep-linkable modal: /projects?open=<slug>
-  const open = (slug: string) => router.push(`/projects?open=${slug}`, { scroll: false });
-  const close = useCallback(() => router.push("/projects", { scroll: false }), [router]);
+  // Deep-linkable modal: /projects?open=<slug> (back button closes it)
+  const open = (slug: string) => {
+    window.history.pushState(null, "", `/projects?open=${slug}`);
+    setOpenSlug(slug);
+  };
+  const close = useCallback(() => {
+    window.history.pushState(null, "", "/projects");
+    setOpenSlug(null);
+  }, []);
 
   return (
     <>
@@ -48,7 +61,8 @@ export default function ProjectsExplorer() {
         </div>
 
         <motion.div layout className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <AnimatePresence mode="popLayout">
+          {/* initial={false}: cards are visible in the server HTML; only filter changes animate */}
+          <AnimatePresence mode="popLayout" initial={false}>
             {shown.map((p) => <ProjectCard key={p.slug} project={p} onOpen={() => open(p.slug)} />)}
           </AnimatePresence>
         </motion.div>

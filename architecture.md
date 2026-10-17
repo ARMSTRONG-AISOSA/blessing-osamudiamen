@@ -13,7 +13,7 @@ Record of the stack, versions, structure and architectural decisions. **Keep thi
 | Animation | `framer-motion` | `^14.3.0` | 14.3.0 |
 | Icons | `lucide-react` | `^1.58.0` | 1.58.0 |
 | Language | `typescript` (strict) | `^5.7.0` | 5.9.3 |
-| Runtime | Node.js | `>=20.9.0` (`engines`) | 22.x |
+| Runtime | Node.js | `>=20.9.0` (`engines`) | 24.19 (owner's machine) |
 | Fonts | `next/font/google`: IBM Plex Sans (400–700), IBM Plex Mono (500–600) | — | — |
 | Hosting | Vercel | — | https://blessing-osamudiamen.vercel.app |
 | Repo | GitHub | — | https://github.com/ARMSTRONG-AISOSA/blessing-osamudiamen.git |
@@ -25,9 +25,10 @@ Notes:
 
 ## Rendering model
 
-- **App Router**, all routes **statically prerendered** (`○ Static`): `/`, `/about`, `/projects`, `/robots.txt`, `/sitemap.xml`.
+- **App Router**, all routes **statically prerendered**: `/`, `/about`, `/projects`, `/projects/[slug]` (5 pages via `generateStaticParams`, `dynamicParams = false`), `/robots.txt`, `/sitemap.xml`, `/manifest.webmanifest`, `/icon.svg`, `/apple-icon`, `/llms.txt`.
 - Server Components by default. Client components (`"use client"`) are only where interactivity needs them: `Navbar` (mobile menu, active route), `Reveal` (scroll animation), `ProjectsExplorer`, `ProjectCard`, `ProjectModal`.
-- `/projects` reads `?open=<slug>` with `useSearchParams` to open a case-study modal, so modals are deep-linkable. The explorer is wrapped in `<Suspense>` so the page can still be prerendered.
+- `/projects` opens a case-study modal from `?open=<slug>`, read from `window.location` **after mount** (plus `history.pushState` / `popstate`). **Don't switch back to `useSearchParams`**: it forces a client-side-rendering bailout, so the card grid would vanish from the static HTML that crawlers read.
+- `AnimatePresence initial={false}` in `ProjectsExplorer` keeps the cards visible in the server HTML (no `opacity:0` before hydration).
 
 ## Folder structure
 
@@ -36,15 +37,18 @@ app/
   layout.tsx            Root layout: fonts, global metadata, JSON-LD <script>, Navbar, Footer, skip link
   page.tsx              Home  → Hero, StatsBanner, Competencies, FeaturedProjects, Certifications
   about/page.tsx        About → Narrative, ContactButtons, Timeline, VirtualExperience, Education, Toolstack
-  projects/page.tsx     Projects → SectionHeading + <Suspense><ProjectsExplorer/></Suspense>
-  sitemap.ts, robots.ts Generated from site.url
+  projects/page.tsx     Projects → SectionHeading + ProjectsExplorer
+  projects/[slug]/page.tsx  One static page per case study (metadata + Article JSON-LD)
+  sitemap.ts, robots.ts Generated from site.url / seo.updated
+  manifest.ts, icon.svg, apple-icon.tsx   Web manifest, favicon, iOS icon
+  llms.txt/route.ts     Plain-text site summary for AI search, generated from data
   globals.css           Tailwind layers + shared component classes (.btn-primary, .card, …)
 components/
   layout/               Navbar, Footer
-  home/ about/ projects/  Page sections (one file per section)
-  SectionHeading, Reveal, CertificationBadge, WhatsAppIcon   shared pieces
-data/profile.ts         SINGLE SOURCE OF TRUTH for all content (typed)
-lib/seo.ts              pageMetadata() helper + personJsonLd()
+  home/ about/ projects/  Page sections (one file per section); projects/CaseStudyContent is shared by modal + page
+  SectionHeading, Reveal, CertificationBadge, WhatsAppIcon, JsonLd   shared pieces
+data/profile.ts         SINGLE SOURCE OF TRUTH for all content (typed), incl. the `seo` object
+lib/seo.ts              pageMetadata(), caseStudyDescription(), JSON-LD graph builders
 public/
   images/portrait.png   Transparent-background headshot, 449×560
   Blessing-Osamudiamen-Resume.pdf   CV served by every Resume button
@@ -53,18 +57,28 @@ public/
 
 ## Data flow
 
-`data/profile.ts` exports typed objects: `site`, `hero`, `stats`, `competencies`, `certifications`, `about`, `experience`, `virtualExperience`, `education`, `tools`, `projects`, `CATEGORIES`. Components import what they need and render it. **No copy is hard-coded in JSX** except section headings and eyebrows.
+`data/profile.ts` exports typed objects: `site`, `seo`, `hero`, `stats`, `competencies`, `certifications`, `about`, `experience`, `virtualExperience`, `education`, `tools`, `projects`, `CATEGORIES`. Components import what they need and render it. **No copy is hard-coded in JSX** except section headings and eyebrows.
 
-`Project` type fields: `slug, category, featured?, context, title, problem, method, tools[], takeaway, keyResult, metrics[{value,label}], steps[], findings[], recommendations[], drive, pdf`.
+`Project` type fields: `slug, category, featured?, context, title, problem, method, tools[], takeaway, keyResult, metrics[{value,label}], steps[], findings[], recommendations[], drive, pdf, keywords[]`.
+- `slug` is the case-study URL (`/projects/<slug>`). Changing it breaks indexed links.
 - `featured: true` puts a project on the Home page (currently Dangote + Sales Dashboard).
+- `keywords`: search terms for that case-study page. Facts from its PDF only.
 - `drive`: the Google Drive folder with the model files. `pdf`: the path under `/public/case-studies/`.
 
 ## SEO
 
-- Global metadata in `app/layout.tsx`: `metadataBase` = `site.url`, title template `%s | Blessing Osamudiamen`, OpenGraph `type: profile` with the portrait image, Twitter card, robots index/follow, `keywords`.
-- Per-page metadata via `pageMetadata({ title, description, path })` in `lib/seo.ts`, which sets the canonical URL and OpenGraph/Twitter tags.
-- JSON-LD `Person` schema (`personJsonLd()`): name, jobTitle, url, image, email, telephone, alumniOf (University of Benin), knowsAbout, `hasCredential` (degree + every certification with issuer and date), `sameAs` (LinkedIn, WhatsApp). **Never** add an address or birthDate.
-- `sitemap.xml` and `robots.txt` are generated from `site.url`.
+All SEO copy lives in `seo` in `data/profile.ts`: `updated` (content date), name forms, `keywords`, `pages.{home,about,projects}.{title,description}`, issuer/university URLs, verification codes.
+
+- **Metadata.** Global defaults are in `app/layout.tsx`: `metadataBase`, keywords, OpenGraph `profile` with first/last name, Twitter, googleBot `max-image-preview:large` / `max-snippet:-1`, applicationName/creator/publisher, `formatDetection` off, and verification tags when the codes are set. Each page calls `pageMetadata({ title, description, path, keywords?, type? })`, which sets an **absolute** title, the canonical URL, keywords and OG/Twitter tags (`profile` | `article` | `website`). Case-study descriptions are `keyResult + takeaway`, trimmed to about 158 characters.
+- **JSON-LD (one `@graph` per page, nodes linked by `@id`).**
+  - The layout renders WebSite (`/#website`) and Person (`/#person`). Person has given/family name, ACA, alternate names, job titles, two Occupations (O*NET codes + skills), worksFor (the current job), alumniOf, knowsAbout (competencies + tools), every credential with issuer and URL, ContactPoints (email/phone, WhatsApp) and sameAs (LinkedIn).
+  - Pages add their own nodes: Home = WebPage; About = ProfilePage (mainEntity Person) + BreadcrumbList; Projects = CollectionPage + ItemList + BreadcrumbList; case study = WebPage + Article (author Person, PDF as associatedMedia) + BreadcrumbList.
+  - **Never** add an address, birthDate or nationality.
+- **H1s.** Each H1 includes the page's main keywords. On Home, About and Projects the eyebrow is rendered *inside* the H1.
+- **sitemap.xml.** It lists 3 pages, 5 case-study pages, the CV PDF and the 5 case-study PDFs, with portrait image entries on Home/About. `lastmod` = `seo.updated`, so **bump `seo.updated` whenever content changes.**
+- **robots.txt.** It allows everything (crawlers need CSS/JS/fonts), links the sitemap and sets host.
+- **PDF metadata.** The CV and case-study PDFs carry Title/Author/Subject/Keywords, which Google shows for PDF results. When a PDF is replaced, set them again.
+- **llms.txt.** A plain-text summary generated from the data, for AI search tools.
 
 ## Contact links (canonical values in `site`)
 
@@ -94,3 +108,9 @@ public/
 | 2026-10-17 | Upgraded **Next 15.5 → 16.4**, React → 19.2+ | Owner requirement. `lint` script removed (Next 16) |
 | 2026-10-17 | `future.hoverOnlyWhenSupported: true` in Tailwind | Stops hover colours sticking after a tap on phones; `active:` handles tap feedback |
 | 2026-10-17 | Live URL `https://blessing-osamudiamen.vercel.app` set in `site.url` | Hosting on Vercel |
+| 2026-10-17 | Static case-study pages `/projects/[slug]` alongside the modal; Home cards link to the pages | Modal-only case studies could not be indexed or ranked |
+| 2026-10-17 | `?open=` read from `window.location`, not `useSearchParams`; `<Suspense>` removed | `useSearchParams` made the projects grid client-only, invisible to crawlers in the static HTML |
+| 2026-10-17 | SEO copy + keywords in `seo` (data/profile.ts); JSON-LD as a linked `@graph` | Content rule; one consistent entity (Person) referenced by every page |
+| 2026-10-17 | Sitemap `lastmod` from `seo.updated`, PDFs included | Truthful lastmod; PDFs are indexable documents carrying her name |
+| 2026-10-17 | No Claude credit anywhere (commits, PRs, site) | Owner rule |
+| 2026-10-17 | `twitter:card` = `summary` (square thumbnail) | Share image is the tall portrait; the 2:1 large card would crop it through the face |
