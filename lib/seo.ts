@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { certifications, competencies, education, experience, projects, seo, site, tools, type Project } from "@/data/profile";
+import { contentUpdated } from "@/lib/content-dates";
 
 /* ---------- helpers ---------- */
 
@@ -158,7 +159,7 @@ export function webPageLd(opts: { path: string; type: "WebPage" | "ProfilePage" 
       isPartOf: { "@id": ids.website },
       about: { "@id": ids.person },
       primaryImageOfPage: { "@id": ids.portrait },
-      dateModified: seo.updated,
+      dateModified: contentUpdated().toISOString(),
       ...(opts.crumbs && { breadcrumb: { "@id": `${url}#breadcrumb` } }),
       ...opts.extra,
     },
@@ -207,7 +208,7 @@ export function caseStudyLd(p: Project) {
       image: { "@id": ids.portrait },
       author: { "@id": ids.person },
       publisher: { "@id": ids.person },
-      dateModified: seo.updated,
+      dateModified: contentUpdated().toISOString(),
       articleSection: p.category,
       genre: "Case study",
       keywords: [...p.keywords, ...p.tools, p.category].join(", "),

@@ -75,7 +75,11 @@ All SEO copy lives in `seo` in `data/profile.ts`: `updated` (content date), name
   - Pages add their own nodes: Home = WebPage; About = ProfilePage (mainEntity Person) + BreadcrumbList; Projects = CollectionPage + ItemList + BreadcrumbList; case study = WebPage + Article (author Person, PDF as associatedMedia) + BreadcrumbList.
   - **Never** add an address, birthDate or nationality.
 - **H1s.** Each H1 includes the page's main keywords. On Home, About and Projects the eyebrow is rendered *inside* the H1.
-- **sitemap.xml.** It lists 3 pages, 5 case-study pages, the CV PDF and the 5 case-study PDFs, with portrait image entries on Home/About. `lastmod` = `seo.updated`, so **bump `seo.updated` whenever content changes.**
+- **sitemap.xml.** It lists 3 pages, 5 case-study pages, the CV PDF and the 5 case-study PDFs, with portrait image entries on Home/About.
+- **Automatic dates (`lib/content-dates.ts`).** `lastChanged(...paths)` runs `git log -1 --format=%cI -- <paths>` at build time. Pages use the last commit touching `data/profile.ts`; each PDF uses its own file. The same date feeds JSON-LD `dateModified`.
+  - Fallback: `seo.updated` at midnight UTC, used only if git is unavailable. A live sitemap whose times are all `T00:00:00` means the fallback is in use.
+  - Vercel builds include git metadata. In a shallow clone, a file last changed beyond the clone depth gets the oldest available commit's date, which is newer than the truth and never older.
+  - Content changes must be **committed** to move the date. **Never** use build time (`new Date()`).
 - **robots.txt.** It allows everything (crawlers need CSS/JS/fonts), links the sitemap and sets host.
 - **PDF metadata.** The CV and case-study PDFs carry Title/Author/Subject/Keywords, which Google shows for PDF results. When a PDF is replaced, set them again.
 - **llms.txt.** A plain-text summary generated from the data, for AI search tools.
@@ -113,6 +117,7 @@ All SEO copy lives in `seo` in `data/profile.ts`: `updated` (content date), name
 | 2026-10-17 | Static case-study pages `/projects/[slug]` alongside the modal; Home cards link to the pages | Modal-only case studies could not be indexed or ranked |
 | 2026-10-17 | `?open=` read from `window.location`, not `useSearchParams`; `<Suspense>` removed | `useSearchParams` made the projects grid client-only, invisible to crawlers in the static HTML |
 | 2026-10-17 | SEO copy + keywords in `seo` (data/profile.ts); JSON-LD as a linked `@graph` | Content rule; one consistent entity (Person) referenced by every page |
-| 2026-10-17 | Sitemap `lastmod` from `seo.updated`, PDFs included | Truthful lastmod; PDFs are indexable documents carrying her name |
+| 2026-10-17 | Sitemap includes PDFs | PDFs are indexable documents carrying her name |
+| 2026-10-17 | Sitemap/JSON-LD dates automatic from git (`lib/content-dates.ts`), `seo.updated` fallback only | Truthful lastmod that can't be forgotten; build time would be false |
 | 2026-10-17 | No Claude credit anywhere (commits, PRs, site) | Owner rule |
 | 2026-10-17 | `twitter:card` = `summary` (square thumbnail) | Share image is the tall portrait; the 2:1 large card would crop it through the face |

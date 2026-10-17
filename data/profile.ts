@@ -32,7 +32,7 @@ export const site = {
 
 /* ---------- SEO ---------- */
 export const seo = {
-  updated: "2026-10-17", // bump when content changes: feeds sitemap <lastmod>
+  updated: "2026-10-17", // FALLBACK ONLY: sitemap/JSON-LD dates come from git automatically (lib/content-dates.ts)
   givenName: "Blessing",
   familyName: "Osamudiamen",
   honorificSuffix: "ACA",

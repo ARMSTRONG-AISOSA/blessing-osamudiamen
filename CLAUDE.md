@@ -26,7 +26,13 @@ Then skim `app/`, `components/` and `lib/seo.ts` to confirm the docs still match
 5. **Keep versions as recorded in `architecture.md`.** Don't upgrade major versions (Next, React, Tailwind) without asking.
 6. **Log every change.** After any change, add a dated entry at the top of the log in `progress.md` saying what changed, why, and which files. Update `architecture.md` or `design.md` too if a decision or standard changed.
 7. **Verify before saying "done":** run `npm run build`. It must pass type-check and generate all pages. For visual changes, check desktop (1440px) and phone (390px) widths.
-8. **Never credit Claude.** No `Co-Authored-By: Claude…`, `Claude-Session:` or "Generated with Claude Code" lines in commits or PRs, and no Claude/AI credit on the site, in the PDFs or in the README. The only site credit is the footer's "Designed and maintained by Bossstrong-Dev".
+8. **Sitemap and structured-data dates are automatic. Never break that.** `lib/content-dates.ts` takes them from the last git commit that touched `data/profile.ts` (pages) or the PDF itself (PDFs). That means:
+   - **Every content change must be committed.** A change that isn't committed doesn't move the date.
+   - Keep all page copy in `data/profile.ts` (rule 1). Copy hard-coded in JSX would change pages without changing the date.
+   - **Never** use `new Date()` / build time for `lastModified` or `dateModified`. Every deploy would then claim everything changed.
+   - New sitemap entries get their date from `lastChanged(<source files>)`.
+   - `seo.updated` is only a fallback for builds without git history. No need to bump it.
+9. **Never credit Claude.** No `Co-Authored-By: Claude…`, `Claude-Session:` or "Generated with Claude Code" lines in commits or PRs, and no Claude/AI credit on the site, in the PDFs or in the README. The only site credit is the footer's "Designed and maintained by Bossstrong-Dev".
 
 ## Commands
 
@@ -47,7 +53,8 @@ There is no lint script: Next 16 removed `next lint`.
 | Contact details / links / live URL | `site` object in `data/profile.ts` |
 | CV download | replace `public/Blessing-Osamudiamen-Resume.pdf` (same filename) |
 | Case-study PDF downloads | `public/case-studies/<slug>.pdf` + `pdf` field of the project |
-| SEO keywords, page titles/descriptions, verification codes | `seo` object in `data/profile.ts` (bump `seo.updated` after any content change: it is the sitemap `lastmod`) |
+| SEO keywords, page titles/descriptions, verification codes | `seo` object in `data/profile.ts` |
+| Sitemap / JSON-LD "last modified" dates | automatic from git: `lib/content-dates.ts` (rule 8) |
 | SEO metadata / JSON-LD logic, sitemap | `lib/seo.ts`, `app/layout.tsx`, `app/sitemap.ts` |
 | Case-study pages | `app/projects/[slug]/page.tsx` (one per project, from `projects`) |
 | Shared styles (buttons, cards, eyebrow) | `app/globals.css` (`@layer components`) |

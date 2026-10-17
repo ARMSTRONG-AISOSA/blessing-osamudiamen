@@ -2,6 +2,8 @@
 
 History of everything done on Blessing Osamudiamen's portfolio. **Newest entry first.** After every change, add a dated entry at the top of the Log: what changed, why, files touched, and how it was verified.
 
+> **Standing rules for every change:** content goes in `data/profile.ts`; **commit it**, because the sitemap/JSON-LD "last modified" dates come from git automatically (`lib/content-dates.ts`, CLAUDE.md rule 8) and are never set from build time; `npm run build` must pass; log the change here; never credit Claude.
+
 ## Current state (as of 2026-10-17)
 
 - Three pages, built and static: **Home**, **About**, **Projects** (5 case studies with modal, PDF download and Google Drive link), plus a static page per case study at `/projects/<slug>`.
@@ -17,6 +19,12 @@ History of everything done on Blessing Osamudiamen's portfolio. **Newest entry f
 - [ ] Add the site URL to her LinkedIn profile (Contact info → Website) so search engines connect the two.
 
 ## Log
+
+### 2026-10-17 — Automatic sitemap dates from git
+- New `lib/content-dates.ts`: `lastChanged(...paths)` = date of the last git commit touching those files. Sitemap pages and JSON-LD `dateModified` use `data/profile.ts`; each PDF uses its own file. `seo.updated` is now only a fallback (no manual bumping).
+- Written down as a rule in CLAUDE.md (rule 8; "never credit Claude" is now rule 9), architecture.md (SEO + decision log) and the standing rules at the top of this file.
+- Files: `lib/content-dates.ts` (new), `app/sitemap.ts`, `lib/seo.ts`, `data/profile.ts`, `CLAUDE.md`, `architecture.md`, `progress.md`.
+- Verified: `npm run build`; local and live sitemap show real commit timestamps (not `T00:00:00`).
 
 ### 2026-10-17 — Search Console verified, sitemap submitted, Bing added
 - Google Search Console: property verified, `sitemap.xml` submitted successfully, URL Inspection live test says the page can be indexed. "Request indexing" hit the daily quota (normal for a new property); retry tomorrow.
